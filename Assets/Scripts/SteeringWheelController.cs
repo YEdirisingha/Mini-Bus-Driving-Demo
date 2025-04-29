@@ -11,9 +11,9 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
     private RectTransform wheelTR;
     private Vector2 centerPoint;
 
-    public float maximumSteeringAngle = 150f;
-    public float wheelReleasedSpeed = 800f;
-    public float valueMultiplier = 1f;
+    public float maximumSteeringAngle = 180f;
+    public float wheelReleasedSpeed = 300f;
+    public float valueMultiplier = 0.5f;
 
     private float wheelAngle = 0f;
     private float wheelPrevAngle = 0f;
@@ -57,13 +57,15 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
         // to initial (zero) rotation by wheelReleasedSpeed degrees per second
         if (!wheelBeingHeld && wheelAngle != 0f)
         {
-            float deltaAngle = Mathf.Lerp(0f, wheelReleasedSpeed, Mathf.Abs(wheelAngle / maximumSteeringAngle)) * Time.deltaTime;
+            float deltaAngle = wheelReleasedSpeed * Time.deltaTime;
             if (Mathf.Abs(deltaAngle) > Mathf.Abs(wheelAngle))
                 wheelAngle = 0f;
             else if (wheelAngle > 0f)
                 wheelAngle -= deltaAngle;
             else
                 wheelAngle += deltaAngle;
+            if (Mathf.Abs(wheelAngle) < 1f)
+                wheelAngle = 0f;
         }
 
         // Rotate the wheel image
@@ -72,50 +74,48 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
         m_value = wheelAngle * valueMultiplier / maximumSteeringAngle;
         axis.value = m_value;
 
-        // NEW: Send the steering input to playerController
-        // Smoothly adjust the steering input
-        float steeringSensitivity = 0.7f;
         float normalizedAngle = wheelAngle / maximumSteeringAngle;
-        float targetSteering = Mathf.Pow(Mathf.Abs(normalizedAngle), 1.5f) * Mathf.Sign(normalizedAngle) * steeringSensitivity;
+        float targetSteering = normalizedAngle * 0.6f; // More linear for bus
 
         if (playerController != null)
         {
-            float currentSteering = Mathf.Lerp(playerController.GetSteering(), targetSteering, 5f * Time.deltaTime); // 5f is smoothing speed
+            float smoothingSpeed = 2.5f; // Slower response for realism
+            float currentSteering = Mathf.Lerp(playerController.GetSteering(), targetSteering, smoothingSpeed * Time.deltaTime);
             playerController.SetSteering(currentSteering);
         }
+
 
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // Executed when mouse/finger starts touching the steering wheel
         wheelBeingHeld = true;
         centerPoint = RectTransformUtility.WorldToScreenPoint(eventData.pressEventCamera, wheelTR.position);
-        wheelPrevAngle = Vector2.Angle(Vector2.up, eventData.position - centerPoint);
+        wheelPrevAngle = GetAngle(eventData.position);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Executed when mouse/finger is dragged over the steering wheel
         Vector2 pointerPos = eventData.position;
 
-        float wheelNewAngle = Vector2.Angle(Vector2.up, pointerPos - centerPoint);
+        float wheelNewAngle = GetAngle(pointerPos);
 
-        // Do nothing if the pointer is too close to the center of the wheel
         if ((pointerPos - centerPoint).sqrMagnitude >= 100f)
         {
-            float sensitivity = 1.5f; // <-- Adjust this value if needed
+            float sensitivity = 1.0f; // Reduced for realistic bus handling
 
-            if (pointerPos.x > centerPoint.x)
-                wheelAngle += (wheelNewAngle - wheelPrevAngle) * sensitivity;
-            else
-                wheelAngle -= (wheelNewAngle - wheelPrevAngle) * sensitivity;
-
+            float deltaAngle = Mathf.DeltaAngle(wheelPrevAngle, wheelNewAngle); // fix wrap-around issues
+            wheelAngle += deltaAngle * sensitivity;
         }
 
-        // Make sure wheel angle never exceeds maximumSteeringAngle
         wheelAngle = Mathf.Clamp(wheelAngle, -maximumSteeringAngle, maximumSteeringAngle);
         wheelPrevAngle = wheelNewAngle;
+    }
+
+    private float GetAngle(Vector2 pointerPosition)
+    {
+        Vector2 fromCenter = pointerPosition - centerPoint;
+        return Mathf.Atan2(fromCenter.x, fromCenter.y) * Mathf.Rad2Deg;
     }
 
     public void OnPointerUp(PointerEventData eventData)

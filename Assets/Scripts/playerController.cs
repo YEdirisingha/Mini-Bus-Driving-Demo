@@ -13,7 +13,7 @@ public class playerController : MonoBehaviour
     public float reverseForce = 1500f;
 
     [Header("Engine Resistance")]
-    public float engineBrakeForce = 2000f; // Braking when throttle is 0
+    public float engineBrakeForce = 200f; // Braking when throttle is 0
     public float accelerationRate = 2f; // How fast throttle increases
     public float decelerationRate = 5f; // How fast throttle decreases
 
@@ -22,6 +22,11 @@ public class playerController : MonoBehaviour
     public WheelCollider frontRightWheelCollider;
     public WheelCollider rearLeftWheelCollider;
     public WheelCollider rearRightWheelCollider;
+
+    [Header("Steering Settings")]
+    public float steeringSmoothTime = 0.2f;
+    private float currentSteering = 0f;
+    private float steeringVelocity = 0f;
 
     public Transform frontLeftWheelTransform;
     public Transform frontRightWheelTransform;
@@ -126,11 +131,17 @@ public class playerController : MonoBehaviour
         {
             totalBrake = brakeInput * brakeForce;
 
-            // Apply engine brake when throttle is 0
             if (Mathf.Approximately(currentThrottle, 0f) && brakeInput == 0f)
             {
                 totalBrake += engineBrakeForce;
+
+                // Limit speed reduction to simulate slow roll instead of full stop
+                if (rb.velocity.magnitude < 10f)
+                {
+                    totalBrake = 0f; // Stop applying engine brake at very low speeds
+                }
             }
+
         }
 
         frontLeftWheelCollider.brakeTorque = totalBrake;
@@ -141,10 +152,14 @@ public class playerController : MonoBehaviour
 
     private void HandleSteering()
     {
-        float steerAngle = steeringInput * maxSteerAngle;
+        // Smooth steering interpolation
+        currentSteering = Mathf.SmoothDamp(currentSteering, steeringInput, ref steeringVelocity, steeringSmoothTime);
+        float steerAngle = currentSteering * maxSteerAngle;
+
         frontLeftWheelCollider.steerAngle = steerAngle;
         frontRightWheelCollider.steerAngle = steerAngle;
     }
+
 
     private void UpdateWheels()
     {

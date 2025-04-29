@@ -14534,6 +14534,7 @@ MonoBehaviour:
   frontRightWheelCollider: {fileID: 400038870}
   rearLeftWheelCollider: {fileID: 798507335}
   rearRightWheelCollider: {fileID: 769760355}
+  steeringSmoothTime: 0.2
   frontLeftWheelTransform: {fileID: 2506438483913204264}
   frontRightWheelTransform: {fileID: 3023325020778329194}
   rearLeftWheelTransform: {fileID: 780360935925896738}
@@ -34495,8 +34496,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -295, y: -77}
-  m_SizeDelta: {x: 150, y: 150}
+  m_AnchoredPosition: {x: -280, y: -77}
+  m_SizeDelta: {x: 170, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &224650762305441857
 MonoBehaviour:
@@ -34526,8 +34527,8 @@ MonoBehaviour:
   axis:
     m_key: Horizontal
     value: 0
-  maximumSteeringAngle: 200
-  wheelReleasedSpeed: 350
+  maximumSteeringAngle: 360
+  wheelReleasedSpeed: 2000
   valueMultiplier: 1
   playerController: {fileID: 890764680}
 --- !u!1 &257559715302994453
