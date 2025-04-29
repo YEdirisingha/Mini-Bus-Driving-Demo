@@ -35,6 +35,9 @@ public class playerController : MonoBehaviour
     private float currentThrottle = 0f;
 
     public Text gearIndicator;
+    private bool isAccelerating = false;
+    private bool isBraking = false;
+
 
     // Reverse mode
     private bool isReversing = false;
@@ -51,6 +54,18 @@ public class playerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Smoothly adjust throttleInput
+        if (isAccelerating)
+            throttleInput = Mathf.MoveTowards(throttleInput, 1f, accelerationRate * Time.fixedDeltaTime);
+        else
+            throttleInput = Mathf.MoveTowards(throttleInput, 0f, decelerationRate * Time.fixedDeltaTime);
+
+        // Smoothly adjust brakeInput
+        if (isBraking)
+            brakeInput = Mathf.MoveTowards(brakeInput, 1f, accelerationRate * Time.fixedDeltaTime);
+        else
+            brakeInput = Mathf.MoveTowards(brakeInput, 0f, decelerationRate * Time.fixedDeltaTime);
+
         CheckReverseState();
         HandleMotor();
         HandleSteering();
@@ -154,23 +169,24 @@ public class playerController : MonoBehaviour
 
     public void PressAccelerate()
     {
-        throttleInput = 1f;
+        isAccelerating = true;
     }
 
     public void ReleaseAccelerate()
     {
-        throttleInput = 0f;
+        isAccelerating = false;
     }
 
     public void PressBrake()
     {
-        brakeInput = 1f;
+        isBraking = true;
     }
 
     public void ReleaseBrake()
     {
-        brakeInput = 0f;
+        isBraking = false;
     }
+
 
     public void PressSteerLeft()
     {
