@@ -12,7 +12,7 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
     private Vector2 centerPoint;
 
     public float maximumSteeringAngle = 150f;
-    public float wheelReleasedSpeed = 350f;
+    public float wheelReleasedSpeed = 800f;
     public float valueMultiplier = 1f;
 
     private float wheelAngle = 0f;
@@ -57,7 +57,7 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
         // to initial (zero) rotation by wheelReleasedSpeed degrees per second
         if (!wheelBeingHeld && wheelAngle != 0f)
         {
-            float deltaAngle = wheelReleasedSpeed * Time.deltaTime;
+            float deltaAngle = Mathf.Lerp(0f, wheelReleasedSpeed, Mathf.Abs(wheelAngle / maximumSteeringAngle)) * Time.deltaTime;
             if (Mathf.Abs(deltaAngle) > Mathf.Abs(wheelAngle))
                 wheelAngle = 0f;
             else if (wheelAngle > 0f)
@@ -74,8 +74,9 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
 
         // NEW: Send the steering input to playerController
         // Smoothly adjust the steering input
-        float targetSteering = wheelAngle / maximumSteeringAngle;
-        targetSteering = Mathf.Clamp(targetSteering, -1f, 1f);
+        float steeringSensitivity = 0.7f;
+        float normalizedAngle = wheelAngle / maximumSteeringAngle;
+        float targetSteering = Mathf.Pow(Mathf.Abs(normalizedAngle), 1.5f) * Mathf.Sign(normalizedAngle) * steeringSensitivity;
 
         if (playerController != null)
         {
@@ -101,12 +102,15 @@ public class SteeringWheelController : MonoBehaviour, ISimpleInputDraggable
         float wheelNewAngle = Vector2.Angle(Vector2.up, pointerPos - centerPoint);
 
         // Do nothing if the pointer is too close to the center of the wheel
-        if ((pointerPos - centerPoint).sqrMagnitude >= 400f)
+        if ((pointerPos - centerPoint).sqrMagnitude >= 100f)
         {
+            float sensitivity = 1.5f; // <-- Adjust this value if needed
+
             if (pointerPos.x > centerPoint.x)
-                wheelAngle += wheelNewAngle - wheelPrevAngle;
+                wheelAngle += (wheelNewAngle - wheelPrevAngle) * sensitivity;
             else
-                wheelAngle -= wheelNewAngle - wheelPrevAngle;
+                wheelAngle -= (wheelNewAngle - wheelPrevAngle) * sensitivity;
+
         }
 
         // Make sure wheel angle never exceeds maximumSteeringAngle
