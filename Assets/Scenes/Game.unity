@@ -12390,6 +12390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weather: {fileID: 1077046044}
+  directionalLight: {fileID: 705507993}
   activateWeather: 1
 --- !u!1 &735874372
 GameObject:
@@ -23112,6 +23113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weather: {fileID: 1077046044}
+  directionalLight: {fileID: 705507993}
   activateWeather: 0
 --- !u!1 &1392995524
 GameObject:
