@@ -30196,8 +30196,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicator: {fileID: 912060189}
-  playerRigidbody: {fileID: 1699202144}
-  maxSpeed: 50
+  referenceWheel: {fileID: 951106402}
+  maxSpeed: 13500
   minZRotation: 140
   maxZRotation: -130
 --- !u!1 &1862512341
