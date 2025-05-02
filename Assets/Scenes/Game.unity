@@ -14633,10 +14633,10 @@ MonoBehaviour:
   lateralFrictionStrength: 300
   dragThresholdSpeed: 5
   busBody: {fileID: 2746826487261159360}
-  maxBodyRollAngle: 5
-  maxBodySquatAngle: 3
-  bodySpringStiffness: 60
-  bodyDamping: 6
+  maxBodyRollAngle: 15
+  maxBodySquatAngle: 1.5
+  bodySpringStiffness: 80
+  bodyDamping: 4
   minLeanSpeed: 2
   maxLeanSpeed: 30
   frontLeftWheelTransform: {fileID: 2506438483913204264}

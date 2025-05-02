@@ -48,14 +48,18 @@ public class playerController : MonoBehaviour
 
     [Header("Body Lean Settings")]
     [SerializeField] private Transform busBody;               // your chassis/root
-    [SerializeField] private float maxBodyRollAngle = 5f;     // deg into turns
-    [SerializeField] private float maxBodySquatAngle = 3f;    // deg on brake
+    [SerializeField] private float maxBodyRollAngle = 15f;     // deg into turns
+    [SerializeField] private float maxBodySquatAngle = 1.5f;    // deg on brake
 
     [Header("Body Spring Settings")]
     [SerializeField] private float bodySpringStiffness = 60f;
     [SerializeField] private float bodyDamping = 6f;
     [SerializeField] private float minLeanSpeed = 2f;  // below this, no lean
     [SerializeField] private float maxLeanSpeed = 30f;  // above this, full effect
+
+    [Header("Steering Bounce")]
+    [SerializeField] private float steeringBounceStrength = 3f;
+    private float prevSteeringInput = 0f;
 
     private float currentBodyRoll = 0f;
     private float bodyRollVelocity = 0f;
@@ -113,11 +117,21 @@ public class playerController : MonoBehaviour
         CheckReverseState();
         HandleMotor();
         HandleSteering();
+        float steerDelta = steeringInput - prevSteeringInput;
+        if (Mathf.Abs(steerDelta) > 0.01f)
+        {
+            // impulse in opposite direction of change → small overshoot/settle
+            bodyRollVelocity += -steerDelta * maxBodyRollAngle * steeringBounceStrength;
+        }
+        prevSteeringInput = steeringInput;
+
+        BodyLean();
+
         UpdateWheels();
         Suspension();
         GroundCheck();
         ApplyLateralDrag();
-        BodyLean();
+
     }
 
     private void CheckReverseState()
