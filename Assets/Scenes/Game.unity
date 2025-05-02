@@ -981,6 +981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 41904891}
   - component: {fileID: 41904890}
+  - component: {fileID: 41904892}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -1043,6 +1044,22 @@ Transform:
   - {fileID: 990704935}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 32.005, y: -0.1, z: 0}
+--- !u!114 &41904892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41904889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5a991fd71569b4e9b6f81ed87e3914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSideOffset: 3
+  maxDutchAngle: 5
+  responsiveness: 4
+  minSpeed: 1
 --- !u!1 &46462067
 GameObject:
   m_ObjectHideFlags: 0
@@ -14610,7 +14627,7 @@ MonoBehaviour:
     m_Bits: 8
   springStiffness: 30000
   damperStiffness: 3000
-  restLenght: 1
+  restLenght: 0.7
   springTravel: 0.6
   wheelRadius: 0.46
   lateralFrictionStrength: 300
@@ -27468,8 +27485,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.56, y: 3.06, z: 8.16}
-  m_Center: {x: 0, y: 1.59, z: 0}
+  m_Size: {x: 2.56, y: 2.8134403, z: 8.16}
+  m_Center: {x: 0, y: 1.7132797, z: 0}
 --- !u!54 &1699202144
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -30345,8 +30362,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicator: {fileID: 912060189}
-  carRb: {fileID: 0}
-  maxSpeed: 13500
+  carRb: {fileID: 1699202144}
+  maxSpeed: 80
   minZRotation: 140
   maxZRotation: -130
 --- !u!1 &1862294495
